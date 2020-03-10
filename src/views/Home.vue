@@ -18,7 +18,13 @@
         </div>
         <input id="fileName" class="form-control" v-model="fileName"/>
       </div>
-      <button class="btn btn-primary">Download</button>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="folder">Ordner </label>
+        </div>
+        <input id="folder" class="form-control" v-model="folder"/>
+      </div>
+      <button @click="download" class="btn btn-primary">Download</button>
     </div>
   </div>
 </template>
@@ -32,7 +38,7 @@ export default {
   },
   computed: {
     filter: function () {
-      if (format==="1") {
+      if (this.format==="mp3") {
         return 'audioonly'
       } else {
         return ''
@@ -41,10 +47,11 @@ export default {
   },
   data () {
     return {
-      format: '1',
+      format: 'mp3',
       url: '',
       fileName: '',
-      playlist: false
+      playlist: false,
+      folder: '',
     }
   },
   methods: {
@@ -53,6 +60,17 @@ export default {
     },
     setPlaylist() {
       this.playlist = true
+    },
+    download() {
+      this.$http.post('http://localhost:4000/save',
+        {
+          url: this.url,
+          fileName: this.fileName,
+          filter: this.filter,
+          folder: this.folder,
+          playlist: this.playlist,
+          format: this.format,
+        })
     }
   }
 };
