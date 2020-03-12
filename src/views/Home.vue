@@ -36,15 +36,6 @@ export default {
   components: {
     "choose-format": SelectChooseFormat
   },
-  computed: {
-    filter: function () {
-      if (this.format==="mp3") {
-        return 'audioonly'
-      } else {
-        return ''
-      }
-    },
-  },
   data () {
     return {
       format: 'mp3',
@@ -62,15 +53,14 @@ export default {
       this.playlist = true
     },
     download() {
-      this.$http.post('http://localhost:4000/save',
-        {
-          url: this.url,
-          fileName: this.fileName,
-          filter: this.filter,
-          folder: this.folder,
-          playlist: this.playlist,
-          format: this.format,
-        })
+      let data = {
+        url: this.url,
+        title: this.fileName,
+        folder: this.folder,
+        playlist: this.playlist,
+        format: this.format,
+      }
+      this.$socket.emit('download', data)
     }
   }
 };
