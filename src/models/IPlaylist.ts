@@ -1,13 +1,11 @@
+import { IFIle } from './IFile'
 import { Status } from './Status'
 
-export interface IFIle {
+export interface IPlaylist {
   id: string
-  socket: object
   url: string
-  title: string
   folder: string
-  playlistId: string
   format: string
-  outPath: string
+  files: IFIle[]
   status: Status
 }
