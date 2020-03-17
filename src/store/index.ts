@@ -7,24 +7,47 @@ Vue.use(Vuex )
 
 export default new Vuex.Store({
   state: {
-    playlists: new Map<string, IFIle>(),
-    files: new Map<string, IFIle>(),
+    files: {},
+    playlists: {},
   },
-  mutations: {
-    SOCKET_downloadFile(state: any, file: IFIle) {
-      for (const [key, playlist] of state.playlists) {
-        if ( key === file.playlistId ) {
-          playlist.set(file.playlistId, file)
-          return
+  getters: {
+    getFiles: (state: any) => {
+      return state.files
+    },
+    getPlaylists: (state: any) => {
+      const playlists = JSON.parse(JSON.stringify(Object.values(state.playlists)))
+      playlists.map((playlist: any) => playlist.data = [])
+      const fileValues = Object.values(state.files)
+      const playlistValues = Object.values(state.playlists)
+      for (const [i, file] of fileValues.entries()) {
+        // @ts-ignore
+        const index = playlistValues.map((playlist) => playlist.id).indexOf(file.playlistId)
+        if (index !== -1) {
+          // @ts-ignore
+          playlists[index].data.push(file)
         }
       }
-      state.files.set(file.id, file)
+      return playlists
     },
-    SOCKET_downloadPlaylist(state: any, playlist: IPlaylist) {
-      state.playlists.set(playlist.id, playlist)
+  },
+  mutations: {
+    downloadFile(state: any, file: IFIle) {
+      Vue.set(state.files, file.id, file)
+    },
+    downloadPlaylist(state: any, playlist: IPlaylist) {
+      Vue.set(state.playlists, playlist.id, playlist)
+      for (const file of playlist.files) {
+        Vue.set(state.files, file.id, file)
+      }
     },
   },
   actions: {
+    SOCKET_downloadFile(context, file: IFIle) {
+      context.commit('downloadFile', file)
+    },
+    SOCKET_downloadPlaylist(context, playlist: IPlaylist) {
+      context.commit('downloadPlaylist', playlist)
+    },
   },
   modules: {
   },
