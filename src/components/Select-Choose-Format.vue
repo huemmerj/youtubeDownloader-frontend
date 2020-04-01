@@ -25,7 +25,7 @@ export default Vue.extend({
   },
   methods: {
     updateFormat() {
-      //@ts-ignore
+      // @ts-ignore
       this.$emit('input', this.$refs.format.value)
     }
   }
